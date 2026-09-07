@@ -3,14 +3,17 @@ export function GET(request) {
     redirect: 'follow',
     headers: { 'Accept': 'application/json' }
   })
-  .then(res => res.json())
-  .then(data => new Response(JSON.stringify(data), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    }
-  }))
+  .then(res => res.text())
+  .then(text => {
+    const data = JSON.parse(text);
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  })
   .catch(err => new Response(JSON.stringify({ error: err.message }), {
     status: 500,
     headers: { 'Content-Type': 'application/json' }
