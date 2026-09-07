@@ -1,19 +1,18 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  
-  try {
-    const response = await fetch('https://script.google.com/macros/s/AKfycbwP7J6U1NtK7araBy2U4RO51bxgjs6w3wc4LjJb-_rF9TCYrcVRaV-GwC-G7QFB-9r1IQ/exec', {
-      redirect: 'follow',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    const text = await response.text();
-    console.log('Raw response:', text.substring(0, 200));
-    const data = JSON.parse(text);
-    res.status(200).json(data);
-  } catch(err) {
-    res.status(500).json({ error: err.message });
-  }
+export function GET(request) {
+  return fetch('https://script.google.com/macros/s/AKfycbwP7J6U1NtK7araBy2U4RO51bxgjs6w3wc4LjJb-_rF9TCYrcVRaV-GwC-G7QFB-9r1IQ/exec', {
+    redirect: 'follow',
+    headers: { 'Accept': 'application/json' }
+  })
+  .then(res => res.json())
+  .then(data => new Response(JSON.stringify(data), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  }))
+  .catch(err => new Response(JSON.stringify({ error: err.message }), {
+    status: 500,
+    headers: { 'Content-Type': 'application/json' }
+  }));
 }
